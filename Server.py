@@ -1,18 +1,16 @@
 import asyncio
 import socket
+import queue
 
 # copied from here: https://stackoverflow.com/questions/48506460/python-simple-socket-client-server-using-asyncio
 
 # options
-printMode = True
+printMode = False
 acceptAllConnections = True
 stopWhenSuccess = False
 
 IP = "127.0.0.1"
 PORT = 15555
-
-
-# codes
 H = "H".encode()
 
 def safePrint(*args):
@@ -21,9 +19,15 @@ def safePrint(*args):
     for arg in args:
         print(arg)
 
+def log_perfect_number(number : str):
+    print("Perfect number found!")
+    print(f"Prime: {successfulValue}")
+    number = int(number)
+    print(f"Perfect Number: {hex((2 ** (number - 1)) * ((2 ** number) - 1))}")
+
+
 safe_addresses = []
 bad_addresses = []
-
 value = 0
 successfulValue = None
 async def get_next_value():
@@ -75,7 +79,9 @@ async def handle_client(client, address):
                 safePrint("Broken pipe error. Maybe worry about this?")
         case "S":
             successfulValue = request[1:]
-            safePrint(f"Client {address} reported a successful value! Value: {successfulValue}")
+
+            # changed for perfect numbers
+            log_perfect_number(successfulValue)
 
     
     client.close()
