@@ -8,6 +8,9 @@ printMode = True
 acceptAllConnections = True
 stopWhenSuccess = False
 
+IP = "127.0.0.1"
+PORT = 15555
+
 
 # codes
 H = "H".encode()
@@ -79,9 +82,8 @@ async def handle_client(client, address):
 
 async def run_server():
     safePrint("Starting server...")
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server = socket.create_server((IP, PORT))
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server.bind(('127.0.0.1', 15555))
     server.listen()
     server.setblocking(False)
 
