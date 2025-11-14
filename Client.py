@@ -42,8 +42,9 @@ def do_client_stuff():
         print(f"Successful value found! Value: {value}")
         report_solved_value(value)
 
-processList = []
-for i in range(8):
-    process = multiprocessing.Process(target=do_client_stuff)
-    process.start()
-    processList.append(process)
+if __name__ == "__main__":
+    processList = []
+    for i in range(8):
+        process = multiprocessing.Process(target=do_client_stuff)
+        process.start()
+        processList.append(process)
