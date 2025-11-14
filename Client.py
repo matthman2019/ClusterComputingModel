@@ -43,7 +43,7 @@ def do_client_stuff():
         report_solved_value(value)
 
 processList = []
-for i in range(3):
+for i in range(8):
     process = multiprocessing.Process(target=do_client_stuff)
     process.start()
     processList.append(process)
