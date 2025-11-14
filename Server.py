@@ -40,7 +40,7 @@ def log_perfect_number(number : str):
 
 safe_addresses = []
 bad_addresses = []
-value = 0
+value = 27887
 successfulValue = None
 async def get_next_value():
     global value, successfulValue
@@ -48,7 +48,7 @@ async def get_next_value():
         return successfulValue
     # get the next value.
     # replace this code!
-    value += 1
+    value += 2
     return value
 
 async def handle_client(client, address):

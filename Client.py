@@ -3,7 +3,7 @@ import multiprocessing
 
 N = "N".encode()
 
-IP = "192.168.0.37"
+IP = "10.143.14.185"
 PORT = 15555
 
 # added just for the perfect numbers task
