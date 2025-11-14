@@ -29,10 +29,13 @@ def safePrint(*args):
         print(arg)
 
 def log_perfect_number(number : str):
-    print("Perfect number found!")
-    print(f"Prime: {successfulValue}")
-    number = int(number)
-    print(f"Perfect Number: {hex((2 ** (number - 1)) * ((2 ** number) - 1))}")
+    # print("Perfect number found!")
+    # print(f"Prime: {successfulValue}")
+    # number = int(number)
+    # print(f"Perfect Number: {hex((2 ** (number - 1)) * ((2 ** number) - 1))}")
+
+    with open("Primes.txt", 'a') as file:
+        file.write(number + "\n")
 
 
 safe_addresses = []
