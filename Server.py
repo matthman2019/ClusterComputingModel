@@ -1,11 +1,15 @@
-import asyncio
+# import asyncio
 import socket
 import queue
+import multiprocessing
+import time
+
+
 
 # copied from here: https://stackoverflow.com/questions/48506460/python-simple-socket-client-server-using-asyncio
 
 # options
-printMode = False
+printMode = True
 acceptAllConnections = True
 stopWhenSuccess = False
 
@@ -42,76 +46,100 @@ safe_addresses = []
 bad_addresses = []
 value = 27887
 successfulValue = None
-async def get_next_value():
-    global value, successfulValue
+valueQueue = multiprocessing.Queue()
+
+def is_prime(number : int):
+    for i in range(2, int(number ** 0.5) + 1, 1):
+        if number % i == 0:
+            return False
+    return True
+
+def find_new_primes():
+    global value
+    while True:
+        if is_prime(value):
+            valueQueue.put(value)
+            # print(value)
+        value += 2
+
+        if valueQueue.qsize() > 1000:
+            time.sleep(1)
+
+valueProcess = multiprocessing.Process(target=find_new_primes)
+valueProcess.start()
+
+def get_next_value():
+    global value, successfulValue, valueQueue
     if successfulValue and stopWhenSuccess:
         return successfulValue
     # get the next value.
     # replace this code!
-    value += 2
-    return value
+    return valueQueue.get(timeout=5)
 
-async def handle_client(client, address):
+def handle_client(client : socket.socket, address, semaphore):
     global successfulValue
-    safePrint(f"\nNew Client: {address}")
-    
-    if not acceptAllConnections:
-        # reject bad addresses
-        if address in bad_addresses:
-            client.close()
+    with semaphore:
+        safePrint(f"\nNew Client: {address}")
         
-        # see if we add a new safe address
-        if not address in safe_addresses:
-
-            acceptNewConn = input(f"New connection from {address}! Accept connection? y/n\n")
-            try:
-                acceptNewConn = acceptNewConn.lower()
-                if acceptNewConn == "n":
-                    bad_addresses.append(address)
-                    client.close()
-                else:
-                    safe_addresses.append(address)
-            except:
+        if not acceptAllConnections:
+            # reject bad addresses
+            if address in bad_addresses:
                 client.close()
-    
-    loop = asyncio.get_event_loop()
+            
+            # see if we add a new safe address
+            if not address in safe_addresses:
 
-    request = (await loop.sock_recv(client, 255)).decode()
+                acceptNewConn = input(f"New connection from {address}! Accept connection? y/n\n")
+                try:
+                    acceptNewConn = acceptNewConn.lower()
+                    if acceptNewConn == "n":
+                        bad_addresses.append(address)
+                        client.close()
+                    else:
+                        safe_addresses.append(address)
+                except:
+                    client.close()
 
-    # process request
-    if request == "":
+        
+        print("Received")
+        request =  client.recv(255).decode()
+
+        # process request
+        if request == "":
+            client.close()
+
+        match request[0]:
+            case "N":
+                try:
+                    client.sendall(str(get_next_value()).encode())
+                    safePrint(f"Successfully dealt with client {address}")
+                except BrokenPipeError:
+                    safePrint("Broken pipe error. Maybe worry about this?")
+            case "S":
+                successfulValue = request[1:]
+
+                # changed for perfect numbers
+                log_perfect_number(successfulValue)
+
+        
         client.close()
 
-    match request[0]:
-        case "N":
-            try:
-                await loop.sock_sendall(client, str(await get_next_value()).encode())
-                safePrint(f"Successfully dealt with client {address}")
-            except BrokenPipeError:
-                safePrint("Broken pipe error. Maybe worry about this?")
-        case "S":
-            successfulValue = request[1:]
-
-            # changed for perfect numbers
-            log_perfect_number(successfulValue)
-
-    
-    client.close()
-
-async def run_server():
+def run_server():
     safePrint("Starting server...")
     server = socket.create_server((IP, PORT))
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.listen()
-    server.setblocking(False)
 
     safePrint("Server is up!")
 
-    loop = asyncio.get_event_loop()
 
     safePrint("Listening...")
+    threadList = []
+    semaphore = multiprocessing.Semaphore(5)
     while True:
-        client, address = await loop.sock_accept(server)
-        loop.create_task(handle_client(client, address[0]))
+        client, address = server.accept()
+        process = multiprocessing.Process(target=handle_client, args=(client, address[0], semaphore))
+        threadList.append(process)
+        process.start()
 
-asyncio.run(run_server())
+run_server()
