@@ -3,7 +3,7 @@ import time
 
 N = "N".encode()
 
-IP = "127.0.0.1"
+IP = "192.168.0.37"
 PORT = 15555
 
 # added just for the perfect numbers task

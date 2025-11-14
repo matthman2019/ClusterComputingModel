@@ -9,7 +9,16 @@ printMode = False
 acceptAllConnections = True
 stopWhenSuccess = False
 
-IP = "127.0.0.1"
+IP = []
+try:
+        IPSocket = socket.create_connection(("1.1.1.1", 80), 5)
+        IP = IPSocket.getsockname()[0]
+except TimeoutError:
+    pass
+except OSError:
+    pass
+
+print(f"IP: {IP}")
 PORT = 15555
 H = "H".encode()
 
