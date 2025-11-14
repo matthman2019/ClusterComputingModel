@@ -1,5 +1,5 @@
 import socket
-import time
+import multiprocessing
 
 N = "N".encode()
 
@@ -33,13 +33,17 @@ def report_solved_value(value : str) -> None:
     conn.send(("S" + value).encode())
 
 
+def do_client_stuff():
+    while True:
+        value = get_new_value()
+        if not evaluate_value(value):
+            continue
+        
+        print(f"Successful value found! Value: {value}")
+        report_solved_value(value)
 
-while True:
-    value = get_new_value()
-    if not evaluate_value(value):
-        continue
-    
-    print(f"Successful value found! Value: {value}")
-    report_solved_value(value)
-
-
+processList = []
+for i in range(8):
+    process = multiprocessing.Process(target=do_client_stuff)
+    process.start()
+    processList.append(process)
