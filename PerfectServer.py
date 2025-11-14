@@ -8,17 +8,25 @@ import queue
 printMode = False
 acceptAllConnections = True
 stopWhenSuccess = False
+localhostMode = True
 
-IP = []
-try:
-        IPSocket = socket.create_connection(("1.1.1.1", 80), 5)
-        IP = IPSocket.getsockname()[0]
-except TimeoutError:
-    pass
-except OSError:
-    pass
+def get_private_ip() -> str:
+    if localhostMode:
+        return "127.0.0.1"
+    
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0)
+        s.connect(("1.1.1.1", 80))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = "127.0.0.1"
+    finally:
+        s.close()
 
-print(f"IP: {IP}")
+    return IP
+
+IP = get_private_ip()
 PORT = 15555
 H = "H".encode()
 
@@ -40,7 +48,7 @@ def log_perfect_number(number : str):
 
 safe_addresses = []
 bad_addresses = []
-value = 27887
+value = 1
 successfulValue = None
 async def get_next_value():
     global value, successfulValue
