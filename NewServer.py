@@ -1,8 +1,8 @@
 import multiprocessing
-from Server import Server
+from Server import Server, get_ip
 import time
 
-server = Server(print_mode=False)
+server = Server(ip_tuple=(get_ip(), 15555), print_mode=True)
 valueQueue = server.queue_mode()
 
 def is_prime(number : int):
@@ -11,7 +11,7 @@ def is_prime(number : int):
             return False
     return True
 
-value = 1
+value = 27101
 def find_new_primes():
     global value
     while True:

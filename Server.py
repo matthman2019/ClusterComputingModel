@@ -65,8 +65,6 @@ class Server:
         self.safe_addresses = []
         self.bad_addresses = []
         self.successful_values = []
-        self.last_value = SharedMemory(create=True, name="last_value", size=64)
-        self.last_value.buf[0] = 1
     
     def _safe_print(self, *args):
         if not self.print_mode:
@@ -82,8 +80,7 @@ class Server:
         # get the next value.
         # replace this code!
         last_value = self.get_next_value_callback()
-        self.last_value.buf = bytearray([last_value])
-        return self.last_value
+        return last_value
 
     def _is_address_ok(self, address : str) -> bool:
         if self.accept_all_connections:
@@ -156,9 +153,7 @@ class Server:
                 process.start()
         except Exception as e:
             print(e)
-        finally:
-            self.last_value.close()
-            self.last_value.unlink()
+
     
     def start(self):
         """Creates a Process to run Server.run() in. This is a non-blocking call."""
@@ -167,7 +162,8 @@ class Server:
     
     def run_with_graphics(self):
         self.start()
-
+        print("Graphics are not yet implemented")
+        '''
         tk = tkinter.Tk()
         value_label = tkinter.Label(tk, text=f"Last value: {self.last_value}")
         value_label.pack()
@@ -180,6 +176,7 @@ class Server:
 
         tk.mainloop()
         print("ended")
+        '''
         
 
     

@@ -13,5 +13,6 @@ def is_mersenne_prime(number : str):
         s = ((s * s) - 2) % mersenne_number
     return s == 0
 
-client = Client((IP, PORT), is_mersenne_prime, 8, False, False)
-client.start()
+if __name__ == "__main__":
+    client = Client((IP, PORT), is_mersenne_prime, 8, False, False)
+    client.start()
