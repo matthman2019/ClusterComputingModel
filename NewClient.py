@@ -2,7 +2,7 @@ from Client import Client
 
 N = "N".encode()
 
-IP = "127.0.0.1"
+IP = "192.168.0.215"
 PORT = 15555
 
 def is_mersenne_prime(number : str):
