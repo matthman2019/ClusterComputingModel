@@ -14,11 +14,14 @@ class Client:
 
     N = "N".encode()
 
-    def __init__(self, ip_tuple : tuple[str, int], 
-                evaluate_function : Callable[[str], bool], 
+    def __init__(self, ip_tuple : tuple[str, int] = ("127.0.0.1", 15555), 
+                evaluate_function : Callable[[str], bool] = None, 
                 number_of_processes : int = 1, 
                 stop_when_success : bool = False, 
                 print_mode : bool = True):
+        
+        if evaluate_function is None:
+            evaluate_function = lambda x: x == 0
         
         self._ipTuple : tuple[str, int] = ip_tuple
         self._ip, self._port = ip_tuple
@@ -67,8 +70,8 @@ class Client:
 
     # methods when running
 
-    # prints, but only if self.print_mode is True
     def _safe_print(self, string : str) -> None:
+        # prints, but only if self.print_mode is True
         if not self.print_mode:
             return
         print(string)
