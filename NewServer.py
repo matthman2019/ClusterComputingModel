@@ -2,7 +2,12 @@ import multiprocessing
 from Server import Server, get_ip
 import time
 
-server = Server(ip_tuple=(get_ip(), 15555), print_mode=True)
+def log_new_prime(string : str):
+    print(f"Success! Power: {string}")
+    with open("Primes2.txt", "a") as file:
+        file.write(string + '\n')
+
+server = Server(ip_tuple=(get_ip(), 15555), print_mode=True, log_success_callback=log_new_prime)
 valueQueue = server.queue_mode()
 
 def is_prime(number : int):
@@ -11,7 +16,7 @@ def is_prime(number : int):
             return False
     return True
 
-value = 27101
+value = 40531
 def find_new_primes():
     global value
     while True:
@@ -21,6 +26,8 @@ def find_new_primes():
 
         while valueQueue.qsize() > 1000:
             time.sleep(1)
+
+
 
 valueProcess = multiprocessing.Process(target=find_new_primes)
 valueProcess.start()

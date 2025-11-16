@@ -30,6 +30,13 @@ class Client:
         self.stop_when_success : bool = stop_when_success
         self.print_mode : bool = print_mode
     
+    def __reduce__(self):
+        return (self.__class__, (self.ip_tuple, 
+                                 self.evaluate_function,
+                                 self.number_of_processes,
+                                 self.stop_when_success,
+                                 self.print_mode))
+    
     # starts the Client. 
     # spawns number_of_processes processes.
     # this still needs to be put in "if __name__ == '__main__'"

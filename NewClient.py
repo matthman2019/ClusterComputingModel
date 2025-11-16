@@ -1,4 +1,12 @@
 from Client import Client
+import pathlib
+from ctypes import cdll, c_char_p, c_bool
+
+mersenne_library = cdll.LoadLibrary(pathlib.Path(__file__).parent / "mersenne.so")
+
+mersenne_library.is_mersenne_prime.argtypes = [c_char_p]
+mersenne_library.is_mersenne_prime.restype = c_bool
+
 
 N = "N".encode()
 
@@ -14,5 +22,5 @@ def is_mersenne_prime(number : str):
     return s == 0
 
 if __name__ == "__main__":
-    client = Client((IP, PORT), is_mersenne_prime, 8, False, False)
+    client = Client((IP, PORT), lambda numberString: mersenne_library.is_mersenne_prime(str(numberString).encode()), 3, False, True)
     client.start()
