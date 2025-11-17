@@ -29,5 +29,5 @@ def is_mersenne_prime(number : str):
 
 if __name__ == "__main__":
     
-    client = Client((IP, PORT), lambda numberString: mersenne_library.is_mersenne_prime(str(numberString).encode()), 3, False, True)
+    client = Client((IP, PORT), lambda numberString: mersenne_library.is_mersenne_prime(str(numberString).encode()), 8, False, True)
     client.start()
