@@ -16,7 +16,7 @@ def is_prime(number : int):
             return False
     return True
 
-value = 108959
+value = 5
 def find_new_primes():
     global value
     while True:
@@ -28,9 +28,9 @@ def find_new_primes():
             time.sleep(1)
 
 
+if __name__ == "__main__":
+    valueProcess = multiprocessing.Process(target=find_new_primes)
+    valueProcess.start()
 
-valueProcess = multiprocessing.Process(target=find_new_primes)
-valueProcess.start()
-
-server.start()
+    server.run()
 # last: Testing 111733

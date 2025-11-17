@@ -7,7 +7,6 @@ import sys
 if sys.platform.startswith('win'):
     mersenne_library = cdll.LoadLibrary(pathlib.Path(__file__).parent / "mersenne.dll")
 elif sys.platform.startswith('linux'):
-    print("This program is running on Linux.")
     mersenne_library = cdll.LoadLibrary(pathlib.Path(__file__).parent / "mersenne.so")
 
 mersenne_library.is_mersenne_prime.argtypes = [c_char_p]
@@ -16,7 +15,7 @@ mersenne_library.is_mersenne_prime.restype = c_bool
 
 N = "N".encode()
 
-IP = "192.168.0.37"
+IP = "127.0.0.1"
 PORT = 15555
 
 def is_mersenne_prime(number : str):
@@ -27,7 +26,10 @@ def is_mersenne_prime(number : str):
         s = ((s * s) - 2) % mersenne_number
     return s == 0
 
+def mersenne_library(number : str):
+    return mersenne_library.is_mersenne_prime(number.encode())
+
 if __name__ == "__main__":
     
-    client = Client((IP, PORT), lambda numberString: mersenne_library.is_mersenne_prime(str(numberString).encode()), 8, False, True)
+    client = Client((IP, PORT), mersenne_library, 8, False, True)
     client.start()

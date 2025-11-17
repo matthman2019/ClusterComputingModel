@@ -66,6 +66,19 @@ class Server:
         self.bad_addresses = []
         self.successful_values = []
     
+    def __reduce__(self):
+        return (self.__class__, (
+                self.ip_tuple,
+                self.semaphore,
+
+                self.get_next_value_callback,
+                self.log_success_callback,
+
+                self.print_mode,
+                self.accept_all_connections,
+                self.stop_when_success,
+                self.reusable_socket))
+    
     def _safe_print(self, *args):
         if not self.print_mode:
             return
@@ -115,6 +128,7 @@ class Server:
             return
         
         request = client.recv(255).decode()
+        print(request)
 
         # process request
 
@@ -128,6 +142,8 @@ class Server:
                 successfulValue = request[1:]
                 self.successful_values.append(successfulValue)
                 self.log_success_callback(successfulValue)
+        
+        
 
         
         client.close()
