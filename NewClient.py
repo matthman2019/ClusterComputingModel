@@ -16,7 +16,7 @@ mersenne_library.is_mersenne_prime.restype = c_bool
 
 N = "N".encode()
 
-IP = "10.160.247.185"
+IP = "192.168.0.37"
 PORT = 15555
 
 def is_mersenne_prime(number : str):
